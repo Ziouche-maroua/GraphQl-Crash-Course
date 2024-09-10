@@ -3,9 +3,9 @@ import { users } from "../dummyData/data.js";
 const userResolver = {
     Query: {
         users: () => users,
-        user:async (_,{userId})=> {
+        user: (_,{userId})=> {
             try {
-				const user = await User.findById(userId);
+				const user =  users.find((user)=> user._id === userId);
 				return user;
 			} catch (err) {
 				console.error("Error in user query:", err);
