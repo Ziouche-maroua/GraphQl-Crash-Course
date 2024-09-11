@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 import User from "../models/user.model.js";
 import { GraphQLLocalStrategy } from "graphql-passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 export const configurePassport = async () => {
 	passport.serializeUser((user, done) => {
@@ -39,4 +40,32 @@ export const configurePassport = async () => {
 			}
 		})
 	);
+    // Google authentication strategy
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "/auth/google/callback", // The URL where Google will redirect after successful authentication
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          let user = await User.findOne({ googleId: profile.id });
+          if (!user) {
+            // If user does not exist, create a new one
+            user = new User({
+              googleId: profile.id,
+              username: profile.displayName,
+              email: profile.emails[0].value,
+            });
+            await user.save();
+          }
+          return done(null, user); // Pass user to serializeUser
+        } catch (err) {
+          return done(err);
+        }
+      }
+    )
+  );
+
 };
