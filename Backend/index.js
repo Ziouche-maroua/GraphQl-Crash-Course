@@ -60,9 +60,9 @@ await server.start();
 // Set up our Express middleware to handle CORS, body parsing,
 // and our expressMiddleware function.
 app.use(
-	"/",
+	"/graphql",
 	cors({
-		origin: "http://localhost:3000",
+		origin: "http://localhost:3000",  // Allow requests from the frontend
 		credentials: true,
 	}),
 	express.json(),
@@ -78,20 +78,20 @@ app.use(
 
 
 // Route to start Google OAuth authentication process
-app.get(
-    "/auth/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
-  );
+// app.get(
+//     "/auth/google",
+//     passport.authenticate("google", { scope: ["profile", "email"] })
+//   );
   
-  // Route to handle the callback after Google has authenticated the user
-  app.get(
-    "/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/login" }),
-    (req, res) => {
-      // Successful authentication, redirect to your dashboard or homepage
-      res.redirect("/dashboard");
-    }
-  );
+//   // Route to handle the callback after Google has authenticated the user
+//   app.get(
+//     "/auth/google/callback",
+//     passport.authenticate("google", { failureRedirect: "/login" }),
+//     (req, res) => {
+//       // Successful authentication, redirect to your dashboard or homepage
+//       res.redirect("/dashboard");
+//     }
+//   );
 
   
 
@@ -99,4 +99,4 @@ await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
 await connectDB();
 
 
-console.log(`🚀 Server ready at http://localhost:4000/`);
+console.log(`🚀 Server ready at http://localhost:4000/graphql`);
